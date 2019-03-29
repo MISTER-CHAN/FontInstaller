@@ -1,14 +1,16 @@
 ﻿using Android.App;
-using Android.OS;
-using Android.Support.V7.App;
-using Android.Runtime;
-using Android.Widget;
-using Java.IO;
-using System.Threading;
-using Java.Util;
+using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.OS;
+using Android.Support.V7.App;
+using Android.Views;
+using Android.Widget;
+using Java.IO;
+using Java.Lang;
+using System.Threading;
 using System.Timers;
+using Thread = System.Threading.Thread;
 using Timer = System.Timers.Timer;
 
 namespace FontInstaller
@@ -16,11 +18,12 @@ namespace FontInstaller
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        bool b = false;
         Button button;
         LinearLayout linearLayout;
+        string s = "";
         TextView textView;
         Timer timer = new Timer();
-        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,23 +43,29 @@ namespace FontInstaller
 
         private void Button_Click(object sender, System.EventArgs e)
         {
-            button.Enabled = false;
-            new Thread(InstallFont).Start();
+            if (!b)
+            {
+                button.Enabled = false;
+                textView.Text = "刪除字體...\n";
+                File[] files = new File("/sdcard/MIUI/theme/.data/content/fonts/").ListFiles();
+                s = files[0].Name;
+                files[0].Delete();
+                textView.Text = "已刪除字體\n";
+                button.Text = "繼續";
+                b = true;
+                button.Enabled = true;
+                StartActivity(PackageManager.GetLaunchIntentForPackage("com.android.thememanager"));
+            }
+            else
+            {
+                button.Enabled = false;
+                textView.Text = "複製字體並重命名...\n";
+                new Thread(InstallFont).Start();
+            }
         }
 
         private void InstallFont()
         {
-            RunOnUiThread(() =>
-            {
-                textView.Text = "刪除字體...\n";
-            });
-            File[] files = new File("/sdcard/MIUI/theme/.data/content/fonts/").ListFiles();
-            string s = files[0].Name;
-            files[0].Delete();
-            RunOnUiThread(() =>
-            {
-                textView.Text = "複製字體並重命名...\n";
-            });
             FileInputStream fileInputStream = new FileInputStream("/sdcard/MISTER_CHAN-ExtBCDEF.ttf");
             new File("/sdcard/MISTER_CHAN-ExtBCDEF.ttf").Exists();
             FileOutputStream fileOutputStream = new FileOutputStream("/sdcard/MIUI/theme/.data/content/fonts/" + s);
@@ -73,7 +82,7 @@ namespace FontInstaller
             RunOnUiThread(() =>
             {
                 textView.Text = "完成!\n";
-                button.Enabled = true;
+                button.Visibility = ViewStates.Gone;
             });
         }
 
