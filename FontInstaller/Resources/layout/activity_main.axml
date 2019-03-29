@@ -10,10 +10,15 @@
 	android:background="#ffffffff"
 	android:gravity="center">
 	<Button
+		android:text="下載字體"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/b_launch" />
+	<Button
 		android:text="偸換字體"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:id="@+id/button" />
+		android:id="@+id/b_rename" />
 	<TextView
 		android:text=" "
 		android:layout_width="wrap_content"
