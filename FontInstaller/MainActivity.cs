@@ -39,7 +39,12 @@ namespace FontInstaller
         {
             bLaunch.Visibility = ViewStates.Gone;
             textView.Text = "刪除字體...\n";
-            File[] files = new File("/sdcard/MIUI/theme/.data/content/fonts/").ListFiles();
+            File file = new File("/sdcard/MIUI/theme/.data/content/fonts/");
+            if (!file.Exists())
+            {
+                file.Mkdir();
+            }
+            File[] files = file.ListFiles();
             if (files.Length > 0)
             {
                 files[0].Delete();
