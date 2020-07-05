@@ -1,27 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:id="@+id/linearLayout"
-	android:orientation="vertical"
-	android:background="#ffffffff"
-	android:gravity="center">
-	<Button
-		android:text="下載字體"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/b_launch" />
-	<Button
-		android:text="偸換字體"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/b_rename" />
-	<TextView
-		android:text=" "
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/textView" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+    <Button
+        android:text="打開主題管理器"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/b_start" />
+    <CheckBox
+        android:text="完成後打開主題管理器"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cb_start"
+        android:checked="true" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="刪除 MRC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/b_delete" />
+        <TextView
+            android:text="或"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:text="替換爲官方 MRC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/b_official" />
+    </LinearLayout>
+    <Button
+        android:text="替換爲 MISTER_CHAN.MRC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/b_custom" />
+    <TextView
+        android:text=" "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
 </LinearLayout>

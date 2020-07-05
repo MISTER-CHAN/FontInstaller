@@ -15,8 +15,8 @@ namespace FontInstaller
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        Button bLaunch, bRename;
-        LinearLayout linearLayout;
+        Button bCustom, bDelete, bOfficial;
+        CheckBox cbStart;
         string s = "";
         TextView textView;
 
@@ -26,48 +26,55 @@ namespace FontInstaller
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
-            bLaunch = FindViewById<Button>(Resource.Id.b_launch);
-            bRename = FindViewById<Button>(Resource.Id.b_rename);
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.linearLayout);
+            bCustom = FindViewById<Button>(Resource.Id.b_custom);
+            bDelete = FindViewById<Button>(Resource.Id.b_delete);
+            bOfficial = FindViewById<Button>(Resource.Id.b_official);
+            cbStart = FindViewById<CheckBox>(Resource.Id.cb_start);
             textView = FindViewById<TextView>(Resource.Id.textView);
 
-            bLaunch.Click += BLaunch_Click;
-            bRename.Click += BRename_Click;
+            bDelete.Click += BDelete_Click;
+            bCustom.Click += BCustom_Click;
+            bOfficial.Click += BOfficial_Click;
+            FindViewById<Button>(Resource.Id.b_start).Click += BStart_Click;
         }
 
-        private void BLaunch_Click(object sender, System.EventArgs e)
+        private void BCustom_Click(object sender, System.EventArgs e)
         {
-            bLaunch.Visibility = ViewStates.Gone;
-            textView.Text = "刪除字體...\n";
+            bCustom.Enabled = false;
+            Replace("/sdcard/FontInstaller/MISTER_CHAN-ExtBCDEF.ttf");
+        }
+
+        private void BDelete_Click(object sender, System.EventArgs e)
+        {
+            bDelete.Enabled = false;
+            bOfficial.Enabled = false;
+            textView.Text = "刪除 MRC...\n";
             File file = new File("/sdcard/MIUI/theme/.data/content/fonts/");
             if (!file.Exists())
-            {
                 file.Mkdir();
-            }
             File[] files = file.ListFiles();
             if (files.Length > 0)
-            {
                 files[0].Delete();
-            }
-            textView.Text = "已刪除字體\n";
+            textView.Text = "已刪除 MRC\n";
+            if (cbStart.Checked)
+                StartActivity(PackageManager.GetLaunchIntentForPackage("com.android.thememanager"));
+        }
+
+        private void BOfficial_Click(object sender, System.EventArgs e)
+        {
+            bOfficial.Enabled = false;
+            bDelete.Enabled = false;
+            Replace("/sdcard/FontInstaller/MIUI.mrc");
+        }
+
+        private void BStart_Click(object sender, System.EventArgs e)
+        {
             StartActivity(PackageManager.GetLaunchIntentForPackage("com.android.thememanager"));
         }
 
-        private void BRename_Click(object sender, System.EventArgs e)
+        private void InstallFont(object input)
         {
-            bLaunch.Visibility = ViewStates.Gone;
-            bRename.Enabled = false;
-            textView.Text = "刪除字體...\n";
-            File[] files = new File("/sdcard/MIUI/theme/.data/content/fonts/").ListFiles();
-            s = files[0].Name;
-            files[0].Delete();
-            textView.Text = "複製字體並重命名...\n";
-            new Thread(InstallFont).Start();
-        }
-
-        private void InstallFont()
-        {
-            FileInputStream fileInputStream = new FileInputStream("/sdcard/MISTER_CHAN-ExtBCDEF.ttf");
+            FileInputStream fileInputStream = new FileInputStream(input + "");
             FileOutputStream fileOutputStream = new FileOutputStream("/sdcard/MIUI/theme/.data/content/fonts/" + s);
             byte[] buffer = new byte[1024];
             int byteRead;
@@ -80,10 +87,28 @@ namespace FontInstaller
             fileOutputStream.Close();
             RunOnUiThread(() =>
             {
-                StartActivity(PackageManager.GetLaunchIntentForPackage("com.android.thememanager"));
+                if (cbStart.Checked)
+                    StartActivity(PackageManager.GetLaunchIntentForPackage("com.android.thememanager"));
                 textView.Text = "完成!\n";
-                bRename.Visibility = ViewStates.Gone;
             });
+        }
+
+        void Replace(string input)
+        {
+            textView.Text = "刪除 MRC...\n";
+            File file = new File("/sdcard/MIUI/theme/.data/content/fonts/");
+            if (!file.Exists())
+                file.Mkdir();
+            File[] files = file.ListFiles();
+            if (files.Length > 0)
+            {
+                s = files[0].Name;
+                files[0].Delete();
+                textView.Text = "複製 MRC 並重命名...\n";
+                new Thread(new System.Threading.ParameterizedThreadStart(InstallFont)).Start(input);
+            }
+            else
+                textView.Text = "失敗: MIUI 中無 MRC!\n";
         }
     }
 }
